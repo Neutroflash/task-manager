@@ -1,47 +1,56 @@
-const express = require('express')
-const TaskService = require('../services/tasks.service')
+const express = require("express");
+const TaskService = require("../services/tasks.service");
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-    try {
-        const data = await TaskService.getAll()
-        res.json(data)
-    } catch (error) {
-        next(error)
-    }
-})
+router.get("/", async (req, res) => {
+  try {
+    const data = await TaskService.getAll();
+    res.json({ data });
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+});
 
-router.get('/:id', (req, res, next) => {
-    try {
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await TaskService.getById(id);
+    res.json({ data });
+  } catch (error) {
+    res.status(404).json({ msg: error.message });
+  }
+});
 
-    } catch (error) {
-        next(error)
-    }
-})
+router.post("/", async (req, res) => {
+  try {
+    const body = req.body;
+    const newData = await TaskService.createTask(body);
+    res.status(201).json({ newData });
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+});
 
-router.post('/', (req, res, next) => {
-    try {
+router.patch("/:id", async (req, res) => {
+  try {
+    const {id} = req.params
+    const body = req.body
+    const updateData = await TaskService.updateTask(id, body)
+    res.status(201).json({updateData})
+  } catch (error) {
+    res.status(404).json({msg: error.message})
+  }
+});
 
-    } catch(error) {
-        next(error)
-    }
-})
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteData = await TaskService.deleteTask(id);
+    res.status(201).json({ deleteData });
+  } catch (error) {
+    res.status(404).json({ msg: error.message });
+  }
+});
 
-router.patch('/:id', (req, res, next) => {
-    try {
-
-    } catch(error) {
-        next(error)
-    }
-})
-
-router.delete('/:id', (req, res, next) => {
-    try {
-        
-    } catch(error) {
-        next(error)
-    }
-})
-
-module.exports = router
+module.exports = router;
