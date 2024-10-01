@@ -48,27 +48,29 @@ editFormDOM.addEventListener('submit', async (e) => {
     });
 
     // Log de la respuesta completa
-    console.log('API Response on edit:', response); 
-    console.log('Response Data:', response.data); // Log de los datos de la respuesta
+    console.log('API Response on edit:', response);
 
-    // Ajusta el acceso a los datos dependiendo de la estructura de la respuesta
-    const task = response.data.data; // Cambié esto para acceder a `data` si es necesario
-    console.log('Task data from edit:', task); // Log para verificar la tarea
+    // Realiza una nueva solicitud GET para obtener los valores actualizados
+    const updatedTaskResponse = await axios.get(`/app/v1/tasks/${id}`);
+    const updatedTask = updatedTaskResponse.data.data; // Asegúrate de que esta sea la ruta correcta
 
-    if (task) { // Comprueba si la tarea está definida
-      const { _id: taskID, completed, name } = task;
+    // Log para verificar los datos actualizados
+    console.log('Updated Task data:', updatedTask);
+
+    if (updatedTask) { // Comprueba si la tarea está definida
+      const { _id: taskID, completed, name } = updatedTask;
 
       taskIDDOM.textContent = taskID; // Muestra el ID
       taskNameDOM.value = name; // Establece el nombre
       tempName = name; // Guarda el nombre temporalmente
       taskCompletedDOM.checked = completed; // Establece el estado de completado
-      
+
       // Mostrar mensaje de éxito
       formAlertDOM.style.display = 'block';
       formAlertDOM.textContent = `Success, edited task`;
       formAlertDOM.classList.add('text-success');
     } else {
-      throw new Error('Failed to edit task: task data is undefined'); // Lanzar un error si no se encuentra la tarea
+      throw new Error('Failed to fetch updated task'); // Lanzar un error si no se encuentra la tarea
     }
   } catch (error) {
     console.error('Error editing task:', error); // Log para el error
