@@ -1,6 +1,8 @@
 const connectDB = require('./db/connect')
 const express = require('express')
 const routerApi = require('./routes')
+const notFound = require('./middlewares/not-found')
+const {errorHandler, logErrors} = require('./middlewares/error-handler')
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -13,6 +15,10 @@ app.get("/", (req, res) => {
 })
 
 routerApi(app)
+
+app.use(notFound)
+app.use(logErrors)
+app.use(errorHandler)
 
 async function startServer() {
     try {

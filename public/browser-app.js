@@ -11,14 +11,16 @@ const showTasks = async () => {
     console.log('API Response Status:', response.status); // Verifica el código de estado
     console.log('API Response Data:', response.data); // Verifica los datos
 
-    const tasks = response.data.data; // Aquí asignamos correctamente los datos de la API
+    // Accede correctamente al array de tareas dentro de response.data.data
+    const tasks = response.data.data.data; // Aquí estamos accediendo al array de tareas
 
-    if (!tasks || tasks.length < 1) {
+    if (!Array.isArray(tasks) || tasks.length < 1) { // Verifica si tasks es un array
       tasksDOM.innerHTML = '<h5 class="empty-list">No tasks in your list</h5>';
       loadingDOM.style.visibility = 'hidden';
       return;
     }
 
+    // Renderizamos las tareas si tasks es un array válido
     const allTasks = tasks.map((task) => {
       const { completed, _id: taskID, name } = task;
       return `<div class="single-task ${completed && 'task-completed'}">
@@ -44,6 +46,7 @@ const showTasks = async () => {
 };
 
 showTasks();
+
 
 // delete task /api/tasks/:id
 
